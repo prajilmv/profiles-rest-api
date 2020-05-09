@@ -56,6 +56,28 @@ class ProfileFeedItem(models.Model):
     )
     status_text = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.status_text
+
+class DeptTable(models.Model):
+    dept_id = models.IntegerField()
+    dept_name = models.CharField(max_length=255)
+    dept_active = models.BooleanField(default = True)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.dept_name
+
+class EmpTable(models.Model):
+    emp_id = models.IntegerField(unique = True)
+    emp_firstname = models.CharField(max_length=255)
+    emp_lastname = models.CharField(max_length=255)
+    emp_active = models.BooleanField(default = True)
+    #emp_dept = models.IntegerField()
+    emp_dept = models.ForeignKey(DeptTable,default=0 ,on_delete=models.SET_DEFAULT)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.firstname

@@ -99,9 +99,33 @@ class UserProfileFeedViewSet(viewsets.ModelViewSet):
     queryset = models.ProfileFeedItem.objects.all()
     permission_classes = (
         permissions.UpdateOwnStatus,
-        #IsAuthenticatedOrReadOnly,        
+        #IsAuthenticatedOrReadOnly,
         IsAuthenticated
     )
 
     def perform_create(self, serializer):
         serializer.save(user_profile=self.request.user)
+
+class EmpTableViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.EmpTableSerializer
+    queryset = models.EmpTable.objects.all()
+
+class DeptTableView(APIView):
+    serializer_class = serializers.DeptTableSerializer
+
+    def get(self, request, format=None):
+        """returns a lsit of APIView features"""
+        queryset = models.DeptTable.objects.all()
+        serializer = self.serializer_class(queryset, many = True)
+        return Response(serializer.data)
+
+    def post(self,request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('dept_name')
+            message=f'Department {name} has been created'
+            serializer.save()
+            return Response({'message':message})
+        else:
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

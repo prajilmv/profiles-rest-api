@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from profiles_api import models
+from profiles_api.validators import validate_alpha
 
 
 class HelloSerializers(serializers.Serializer):
@@ -35,8 +36,24 @@ class ProfileFeedItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ProfileFeedItem
-        fields = ('id','user_profile','status_text','created_on')
+        fields = ('id','user_profile','status_text','created_on','updated_on')
 
         extra_kwargs = {
             'user_profile':{'read_only':True}
         }
+
+class EmpTableSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.EmpTable
+        fields = ('id','emp_id','emp_firstname','emp_lastname','emp_active','emp_dept','created_on')
+        extra_kwargs = {'emp_id' : {'read_only' : False}}
+
+class DeptTableSerializer(serializers.ModelSerializer):
+
+    dept_name = serializers.CharField(min_length=10)
+    dept_name = serializers.CharField(validators=[validate_alpha])
+
+    class Meta:
+        model = models.DeptTable
+        fields = ('id','dept_id','dept_name','dept_active','created_on')
